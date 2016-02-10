@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Rohith Kumbharkar</authors>
+    <owners>RohithKumbharkar</owners>
+    <licenseUrl>https://raw.githubusercontent.com/RohithKumbharkar/Raven/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/RohithKumbharkar/Raven</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>A decoupled ASP.NET Identity library backed with RavenDB</releaseNotes>
+    <copyright>Copyright 2016 Rohith Kumbharkar</copyright>
+    <tags>ASP ASPNET ASP.NET Identity Membership Raven RavenDB CreativeColon RohithKumbharkar</tags>
+  </metadata>
+  <files>
+    <file src="readme.txt" />
+  </files>
+</package>
