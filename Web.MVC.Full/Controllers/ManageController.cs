@@ -7,6 +7,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Web.MVC.Full.Models;
+using CreativeColon.Raven.Identity.Domain;
+using CreativeColon.Raven.Identity.Models;
 
 namespace Web.MVC.Full.Controllers
 {
@@ -32,9 +34,9 @@ namespace Web.MVC.Full.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -331,7 +333,7 @@ namespace Web.MVC.Full.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -382,6 +384,6 @@ namespace Web.MVC.Full.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }
