@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Raven Identity by RohithKumbharkar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Raven Identity</h1>
+      <h2 class="project-tagline">A RavenDB storage provider for ASP.NET Identity</h2>
+      <a href="https://github.com/RohithKumbharkar/Raven" class="btn">View on GitHub</a>
+      <a href="https://github.com/RohithKumbharkar/Raven/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/RohithKumbharkar/Raven/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h2>
+<a id="guidelines-to-integrate-ravendb-with-aspnet-mvc-application" class="anchor" href="#guidelines-to-integrate-ravendb-with-aspnet-mvc-application" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Guidelines to integrate RavenDB with ASP.NET MVC application</h2>
+
+<p>Create a new <strong>ASP.NET MVC</strong> project with the <strong>Authentication</strong> type set as <strong>Individual User Accounts</strong></p>
+
+<pre><code>File -&gt; New -&gt; Project -&gt; Web -&gt; ASP.NET Web Application
+</code></pre>
+
+<div>
+<img src="images/Create Project.gif" alt="Create New Project">
+</div>
+
+<p>Replace <strong>Entity Framework</strong> with <strong>RavenDB</strong> as storage provider using <strong>NuGet Package Manager</strong></p>
+
+<div class="highlight highlight-source-powershell"><pre><span class="pl-c1">Uninstall-Package</span> Microsoft.AspNet.Identity.EntityFramework
+<span class="pl-c1">Uninstall-Package</span> EntityFramework
+<span class="pl-c1">Install-Package</span> CreativeColon.Raven.Identity</pre></div>
+
+<div>
+<img src="images/Replace EF with Raven.gif" alt="Replace Entity Framework with RavenDB">
+</div>
+
+<span><code><strong>Note:</strong> You might need to restart Visual Studio for Entity Framework to be completely removed.</code></span>
+
+<p>Delete these files from the project as they're not required anymore</p>
+
+<pre><code>App_Start/IdentityConfig.cs
+Models/IdentityModels.cs
+</code></pre>
+
+<div>
+<img src="images/Remove Files.gif" alt="Remove Unwanted Files">
+</div>
+
+<p>Add these namespaces to the given files</p>
+
+<ul>
+<li>
+<strong>Namespaces</strong>
+
+<ul>
+<li><code>using CreativeColon.Raven.Identity.Domain;</code></li>
+<li><code>using CreativeColon.Raven.Identity.Models;</code></li>
+</ul>
+</li>
+<li>
+<strong>Files</strong>
+
+<ul>
+<li><code>App_Start/Startup.Auth.cs</code></li>
+<li><code>Controllers/AccountController.cs</code></li>
+<li><code>Controllers/ManageController.cs</code></li>
+</ul>
+</li>
+</ul>
+
+<div>
+<img src="images/Add Namespaces.gif" alt="Add Raven.Identity namespaces">
+</div>
+
+<p>Add <strong>Connection String</strong> for <strong>RavenDB</strong> and name it as <strong>RavenConnection</strong> to avoid any effort</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">add</span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>RavenConnection<span class="pl-pds">"</span></span> <span class="pl-e">connectionString</span>=<span class="pl-s"><span class="pl-pds">"</span>Url=http://localhost:8080;Database=IdentityDB<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<div>
+<img src="images/Add Connection String.gif" alt="Add required Connection String">
+</div>
+
+<p>Do this only if you've <strong>NOT</strong> named your <strong>Connection String</strong> as <strong>RavenConnection</strong></p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">add</span> <span class="pl-e">name</span>=<span class="pl-s"><span class="pl-pds">"</span>MyNoSqlDB<span class="pl-pds">"</span></span> <span class="pl-e">connectionString</span>=<span class="pl-s"><span class="pl-pds">"</span>Url=http://localhost:8080;Database=IdentityDB<span class="pl-pds">"</span></span> /&gt;</pre></div>
+
+<p>Open <code>App_Start/Startup.Auth.cs</code> and replace <strong>Line 1</strong> with <strong>Line 2</strong></p>
+
+<div class="highlight highlight-source-cs"><pre><span class="pl-c1">1</span>. app.CreatePerOwinContext(ApplicationDbContext.Create);
+<span class="pl-c1">2</span>. app.CreatePerOwinContext(() =&gt; { <span class="pl-k">return</span> ApplicationDbContext.Create(<span class="pl-s"><span class="pl-pds">"</span>MyNoSqlDB<span class="pl-pds">"</span></span>); });</pre></div>
+
+<div>
+<img src="images/Call Create Override.gif" alt="Call Create Over-ride for other Connection String">
+</div>
+
+<hr>
+
+<h3>
+<a id="for-enabling-email-verification-and-forgot-password-functionalities" class="anchor" href="#for-enabling-email-verification-and-forgot-password-functionalities" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For enabling Email Verification and Forgot Password functionalities</h3>
+
+<p>Add <strong>SMTP</strong> details in <strong>web.config</strong> file</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">system</span>.net&gt;
+  &lt;<span class="pl-ent">mailSettings</span>&gt;
+    &lt;<span class="pl-ent">smtp</span> <span class="pl-e">deliveryMethod</span>=<span class="pl-s"><span class="pl-pds">"</span>Network<span class="pl-pds">"</span></span> <span class="pl-e">from</span>=<span class="pl-s"><span class="pl-pds">"</span>SenderEmailAddress<span class="pl-pds">"</span></span>&gt;
+      &lt;<span class="pl-ent">network</span> <span class="pl-e">host</span>=<span class="pl-s"><span class="pl-pds">"</span>SMTPHost<span class="pl-pds">"</span></span> <span class="pl-e">port</span>=<span class="pl-s"><span class="pl-pds">"</span>587<span class="pl-pds">"</span></span> <span class="pl-e">userName</span>=<span class="pl-s"><span class="pl-pds">"</span>Username<span class="pl-pds">"</span></span> <span class="pl-e">password</span>=<span class="pl-s"><span class="pl-pds">"</span>Password<span class="pl-pds">"</span></span> <span class="pl-e">enableSsl</span>=<span class="pl-s"><span class="pl-pds">"</span>true<span class="pl-pds">"</span></span> /&gt;
+    &lt;/<span class="pl-ent">smtp</span>&gt;
+  &lt;/<span class="pl-ent">mailSettings</span>&gt;
+&lt;/<span class="pl-ent">system</span>.net&gt;</pre></div>
+
+<p>Visit <a href="https://github.com/RohithKumbharkar/Raven/tree/master/Web.MVC.Full">MVC Template with Raven Identity</a> which has all the changes required for this integration</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/RohithKumbharkar/Raven">Raven Identity</a> is maintained by <a href="https://github.com/RohithKumbharkar">RohithKumbharkar</a>.</span>
+
+        <span class="site-footer-credits">This page was possible because of <a href="https://pages.github.com">GitHub Pages</a> and <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
